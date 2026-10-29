@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #000000;
+  --surface: #1c1c1e;
+  --surface-2: #2c2c2e;
+  --text: #ffffff;
+  --text-dim: rgba(255,255,255,0.55);
+  --accent: #0a84ff;
+  --glass-bg: rgba(255,255,255,0.12);
+  --glass-border: rgba(255,255,255,0.18);
+  --glass-blur: 40px;
+  --radius-squircle: 22.5%;
+  --statusbar-h: 54px;
+  --dock-h: 94px;
+  --brightness: 1;
+  --font-scale: 1;
+}
+
+[data-theme="light"] {
+  --bg: #f2f2f7;
+  --surface: #ffffff;
+  --surface-2: #f2f2f7;
+  --text: #000000;
+  --text-dim: rgba(0,0,0,0.45);
+  --glass-bg: rgba(255,255,255,0.72);
+  --glass-border: rgba(0,0,0,0.08);
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Inter, system-ui, sans-serif;
+  background: #0a0a0a;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.phone-shell {
+  filter: brightness(var(--brightness));
+}
+
+.glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 8px 24px rgba(0,0,0,0.25);
+  position: relative;
+}
+
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 40%);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.glass-dark {
+  background: linear-gradient(180deg, rgba(30,30,30,0.75) 0%, rgba(20,20,20,0.85) 100%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.reduce-transparency .glass,
+.reduce-transparency .glass-dark {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: var(--surface);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .glass, .glass-dark {
+    background: rgba(40,40,40,0.95);
+  }
+}
+
+.squircle {
+  border-radius: 22.5%;
+  overflow: hidden;
+}
+
+.safe-top { padding-top: env(safe-area-inset-top, 0px); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
