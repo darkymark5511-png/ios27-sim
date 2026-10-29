@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { PhoneShell } from './components/shell/PhoneShell'
 import { BootScreen } from './components/screens/BootScreen'
 import { WelcomeScreen } from './components/screens/WelcomeScreen'
@@ -26,15 +27,18 @@ export default function App() {
   const [cc, setCc] = useState(false)
   const [shade, setShade] = useState(false)
 
-  const onShellPointerDown = useCallback((e: React.PointerEvent) => {
-    if (state !== 'unlocked' && state !== 'locked') return
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-    const y = e.clientY - rect.top
-    const x = e.clientX - rect.left
-    if (y > 50) return
-    if (x > rect.width * 0.55) setCc(true)
-    else setShade(true)
-  }, [state])
+  const onShellPointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      if (state !== 'unlocked' && state !== 'locked') return
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+      const y = e.clientY - rect.top
+      const x = e.clientX - rect.left
+      if (y > 50) return
+      if (x > rect.width * 0.55) setCc(true)
+      else setShade(true)
+    },
+    [state]
+  )
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -51,15 +55,24 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  if (state === 'booting') {
+    return (
+      <PhoneShell>
+        <BootScreen />
+      </PhoneShell>
+    )
+  }
+
   return (
     <PhoneShell>
       <div className="absolute inset-0" onPointerDown={onShellPointerDown}>
-        {state === 'booting' && <BootScreen />}
-        {state === 'welcome' && <WelcomeScreen />}
-        {state === 'locked' && <LockScreen />}
-        {(state === 'unlocked' || state === 'switcher') && <HomeScreen />}
-        {state === 'recovery' && <RecoveryScreen />}
-        {state === 'erasing' && <EraseScreen />}
+        <AnimatePresence mode="wait">
+          {state === 'welcome' && <WelcomeScreen key="welcome" />}
+          {state === 'locked' && <LockScreen key="lock" />}
+          {(state === 'unlocked' || state === 'switcher') && <HomeScreen key="home" />}
+          {state === 'recovery' && <RecoveryScreen key="recovery" />}
+          {state === 'erasing' && <EraseScreen key="erase" />}
+        </AnimatePresence>
 
         <Calculator />
         <Clock />
@@ -80,12 +93,7 @@ export default function App() {
           <div>state: {state}</div>
           <div className="mt-1 flex flex-wrap gap-1">
             {(['booting', 'welcome', 'locked', 'unlocked', 'recovery', 'erasing'] as const).map((s) => (
-              <button
-                key={s}
-                type="button"
-                className="rounded bg-white/20 px-1"
-                onClick={() => setState(s)}
-              >
+              <button key={s} type="button" className="rounded bg-white/20 px-1" onClick={() => setState(s)}>
                 {s}
               </button>
             ))}
